@@ -13,6 +13,7 @@
 -export([mul/2]).
 -export([rmRow/2]).
 -export([rmCol/2]).
+-export([rm/3]).
 
 det([[A11, A12], [A21, A22]]) -> A11 * A22 - A12 * A21.
 
@@ -24,9 +25,11 @@ mul(A, Det) -> lists:map(
 
 rmRow([], _) -> [];
 rmRow([_|T], 0) -> T;
-rmRow(A, I) -> rmRow(A, I-1).
+rmRow([H|T], I) -> [H|rmRow(T, I-1)].
 
 rmCol(A, I) -> lists:map(fun(X) -> rmRow(X, I) end, A).
+
+rm(A, I, J) -> rmCol(rmRow(A, I), J).
 
 det_test() ->
   [?assertEqual(det([[1, 0], [0, 1]]), 1),
@@ -37,5 +40,11 @@ det_test() ->
 
    ?assertEqual(rmRow([[1, 2], [3, 4]], 0), [[3, 4]]),
    ?assertEqual(rmRow([1, 2, 3], 0), [2, 3]),
+   ?assertEqual(rmRow([1, 2, 3], 1), [1, 3]),
 
-   ?assertEqual(rmCol([[1, 2], [3, 4]], 0), [[2], [4]])].
+   ?assertEqual(rmCol([[1, 2], [3, 4]], 0), [[2], [4]]),
+   ?assertEqual(rmCol([[1, 2], [3, 4]], 1), [[1], [3]]),
+
+    ?assertEqual(rm([[1, 2], [3, 4]], 0, 0), [[4]]),
+    ?assertEqual(rm([[1, 2], [3, 4]], 1, 1), [[1]]),
+    ?assertEqual(rm([[1, 2], [3, 4]], 0, 1), [[3]])].
