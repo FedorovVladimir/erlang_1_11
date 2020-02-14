@@ -10,10 +10,14 @@
 -author("vladimir").
 -include_lib("eunit/include/eunit.hrl").
 -export([det/1]).
+-export([f/1]).
 
 det([[A11, A12], [A21, A22]]) -> A11 * A22 - A12 * A21.
 
-simple_test() ->
+f(A) -> A.
+
+det_test() ->
   [?assert(det([[1, 0], [0, 1]]) == 1),
    ?assert(det([[1, 1], [0, 1]]) == 1),
-   ?assert(det([[1, 1], [1, 1]]) == 0)].
+   ?assert(det([[1, 1], [1, 1]]) == 0),
+   ?assert(f([[1, 0], [0, 1]]) == [[1, 0], [0, 1]])].
