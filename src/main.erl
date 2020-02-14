@@ -11,7 +11,8 @@
 -include_lib("eunit/include/eunit.hrl").
 -export([f/1]).
 
-f(M) -> M.
+f([H|T]) -> [H|T].
 
 simple_test() ->
-  [?assert(f([[1, 0], [0, 1]]) == [[1, 0], [0, 1]])].
+    [?assert(f([[1]]) == [[1]]),
+     ?assert(f([[1, 0], [0, 1]]) == [[1, 0], [0, 1]])].
