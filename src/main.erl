@@ -31,6 +31,14 @@ rmCol(A, I) -> lists:map(fun(X) -> rmRow(X, I) end, A).
 
 rm(A, I, J) -> rmCol(rmRow(A, I), J).
 
+getRow([], _) -> [];
+getRow([H|_], 0) -> H;
+getRow([_|T], I) -> getRow(T, I-1).
+
+get(A, I, J) -> getRow(getRow(A, I), J).
+
+%%m(A, I, J) -> det(rm(A, I, J)) * get(A, I, J).
+
 det_test() ->
   [?assertEqual(det([[1, 0], [0, 1]]), 1),
    ?assertEqual(det([[1, 1], [0, 1]]), 1),
@@ -45,6 +53,15 @@ det_test() ->
    ?assertEqual(rmCol([[1, 2], [3, 4]], 0), [[2], [4]]),
    ?assertEqual(rmCol([[1, 2], [3, 4]], 1), [[1], [3]]),
 
-    ?assertEqual(rm([[1, 2], [3, 4]], 0, 0), [[4]]),
-    ?assertEqual(rm([[1, 2], [3, 4]], 1, 1), [[1]]),
-    ?assertEqual(rm([[1, 2], [3, 4]], 0, 1), [[3]])].
+   ?assertEqual(rm([[1, 2], [3, 4]], 0, 0), [[4]]),
+   ?assertEqual(rm([[1, 2], [3, 4]], 1, 1), [[1]]),
+   ?assertEqual(rm([[1, 2], [3, 4]], 0, 1), [[3]]),
+
+   ?assertEqual(getRow([[1, 2], [3, 4]], 0), [1, 2]),
+   ?assertEqual(getRow([[1, 2], [3, 4]], 1), [3, 4]),
+   ?assertEqual(getRow([1, 2], 0), 1),
+   ?assertEqual(getRow([1, 2], 1), 2),
+
+   ?assertEqual(get([[1, 2], [3, 4]], 0, 0), 1),
+   ?assertEqual(get([[1, 2], [3, 4]], 0, 1), 2),
+   ?assertEqual(get([[1, 2], [3, 4]], 1, 0), 3)].
