@@ -37,10 +37,13 @@ getRow([_|T], I) -> getRow(T, I-1).
 
 get(A, I, J) -> getRow(getRow(A, I), J).
 
-%%m(A, I, J) -> det(rm(A, I, J)) * get(A, I, J).
+m(A, I, J) ->
+ if I + J rem 2 == 0 -> det(rm(A, I, J)) * get(A, I, J);
+    I + J rem 2 == 1 -> det(rm(A, I, J)) * (-1) * get(A, I, J) end.
 
 det_test() ->
-  [?assertEqual(det([[1, 0], [0, 1]]), 1),
+  [
+   ?assertEqual(det([[1, 0], [0, 1]]), 1),
    ?assertEqual(det([[1, 1], [0, 1]]), 1),
    ?assertEqual(det([[1, 1], [1, 1]]), 0),
 
@@ -64,4 +67,8 @@ det_test() ->
 
    ?assertEqual(get([[1, 2], [3, 4]], 0, 0), 1),
    ?assertEqual(get([[1, 2], [3, 4]], 0, 1), 2),
-   ?assertEqual(get([[1, 2], [3, 4]], 1, 0), 3)].
+   ?assertEqual(get([[1, 2], [3, 4]], 1, 0), 3),
+
+   ?assertEqual(m([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 0, 0), -3),
+   ?assertEqual(m([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 0, 1), 12)
+   ].
