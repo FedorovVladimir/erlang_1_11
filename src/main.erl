@@ -38,14 +38,20 @@ getRow([_|T], I) -> getRow(T, I-1).
 get(A, I, J) -> getRow(getRow(A, I), J).
 
 m(A, I, J) ->
- if I + J rem 2 == 0 -> det(rm(A, I, J)) * get(A, I, J);
-    I + J rem 2 == 1 -> det(rm(A, I, J)) * (-1) * get(A, I, J) end.
+ if (I + J) rem 2 == 0 -> det(rm(A, I, J)) * get(A, I, J);
+    (I + J) rem 2 == 1 -> det(rm(A, I, J)) * (-1) * get(A, I, J) end.
+
+f1(_, [], _, _) -> [];
+f1(A, [_|T], I, J) -> [m(A, I, J) | f1(A, T, I, J+1)].
+%%f(A) -> f0(A, A, 0, 0).
+%%f0(A, [H|T], I, J) -> [f1(A, H, I, J) | f0(A, T, I+1, J)].
 
 det_test() ->
   [
    ?assertEqual(det([[1, 0], [0, 1]]), 1),
    ?assertEqual(det([[1, 1], [0, 1]]), 1),
    ?assertEqual(det([[1, 1], [1, 1]]), 0),
+   ?assertEqual(det([[0, 1], [0, 0]]), 0),
 
    ?assertEqual(mul([[1, 0], [0, 1]], 2), [[2, 0], [0, 2]]),
 
@@ -59,6 +65,7 @@ det_test() ->
    ?assertEqual(rm([[1, 2], [3, 4]], 0, 0), [[4]]),
    ?assertEqual(rm([[1, 2], [3, 4]], 1, 1), [[1]]),
    ?assertEqual(rm([[1, 2], [3, 4]], 0, 1), [[3]]),
+   ?assertEqual(rm([[1, 0, -1], [0, 1, 0], [0, 0, 1]], 0, 2), [[0, 1], [0, 0]]),
 
    ?assertEqual(getRow([[1, 2], [3, 4]], 0), [1, 2]),
    ?assertEqual(getRow([[1, 2], [3, 4]], 1), [3, 4]),
@@ -68,7 +75,16 @@ det_test() ->
    ?assertEqual(get([[1, 2], [3, 4]], 0, 0), 1),
    ?assertEqual(get([[1, 2], [3, 4]], 0, 1), 2),
    ?assertEqual(get([[1, 2], [3, 4]], 1, 0), 3),
+   ?assertEqual(get([[1, 0, -1], [0, 1, 0], [0, 0, 1]], 0, 2), -1),
 
    ?assertEqual(m([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 0, 0), -3),
-   ?assertEqual(m([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 0, 1), 12)
+   ?assertEqual(m([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 0, 1), 12),
+   ?assertEqual(m([[1, 0, -1], [0, 1, 0], [0, 0, 1]], 0, 0), 1),
+   ?assertEqual(m([[1, 0, -1], [0, 1, 0], [0, 0, 1]], 0, 1), 0),
+   ?assertEqual(m([[1, 0, -1], [0, 1, 0], [0, 0, 1]], 0, 2), 0),
+   ?assertEqual(m([[1, 0, -1], [0, 1, 0], [0, 0, 1]], 1, 0), 0),
+   ?assertEqual(m([[1, 0, -1], [0, 1, 0], [0, 0, 1]], 1, 1), 1),
+
+   ?assertEqual(f1([[1, 0, -1], [0, 1, 0], [0, 0, 1]], [1, 0, -1], 0, 0), [1, 0, 0]),
+   ?assertEqual(f1([[1, 0, -1], [0, 1, 0], [0, 0, 1]], [0, 1, 0], 1, 0), [0, 1, 0])
    ].
