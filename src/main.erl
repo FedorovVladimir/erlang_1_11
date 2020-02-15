@@ -9,19 +9,8 @@
 -module(main).
 -author("vladimir").
 -include_lib("eunit/include/eunit.hrl").
--export([det/1]).
--export([mul/2]).
--export([rmRow/2]).
--export([rmCol/2]).
--export([rm/3]).
 
 det([[A11, A12], [A21, A22]]) -> A11 * A22 - A12 * A21.
-
-mul(A, Det) -> lists:map(
-  fun(R) -> lists:map(
-    fun(X) -> X * Det
-    end, R)
-  end, A).
 
 rmRow([], _) -> [];
 rmRow([_|T], 0) -> T;
@@ -29,31 +18,36 @@ rmRow([H|T], I) -> [H|rmRow(T, I-1)].
 
 rmCol(A, I) -> lists:map(fun(X) -> rmRow(X, I) end, A).
 
+%% Удаление строки и столбца
 rm(A, I, J) -> rmCol(rmRow(A, I), J).
 
 getRow([], _) -> [];
 getRow([H|_], 0) -> H;
 getRow([_|T], I) -> getRow(T, I-1).
 
+%% Поиск элемента
 get(A, I, J) -> getRow(getRow(A, I), J).
 
+%% Поиск элемента
 m(A, I, J) ->
  if (I + J) rem 2 == 0 -> det(rm(A, I, J));
     (I + J) rem 2 == 1 -> det(rm(A, I, J)) * (-1) end.
 
+%% Поиск транспонированой к обратной матрице
 f1(_, [], _, _) -> [];
 f1(A, [_|T], I, J) -> [m(A, I, J) | f1(A, T, I, J+1)].
 f(A) -> f0(A, A, 0, 0).
 f0(_, [], _, _) -> [];
 f0(A, [H|T], I, J) -> [f1(A, H, I, J) | f0(A, T, I+1, J)].
 
+%% Транспонирование
 t1(_, [], _, _) -> [];
 t1(A, [_|T], I, J) -> [get(A, J, I) | t1(A, T, I, J+1)].
 t(A) -> t0(A, A, 0, 0).
 t0(_, [], _, _) -> [];
 t0(A, [H|T], I, J) -> [t1(A, H, I, J) | t0(A, T, I+1, J)].
 
-%% Функция транспонирования
+%% Функция поиска обратной матрицы
 main(A) -> t(f(A)).
 
 det_test() ->
@@ -62,8 +56,6 @@ det_test() ->
    ?assertEqual(det([[1, 1], [0, 1]]), 1),
    ?assertEqual(det([[1, 1], [1, 1]]), 0),
    ?assertEqual(det([[0, 1], [0, 0]]), 0),
-
-   ?assertEqual(mul([[1, 0], [0, 1]], 2), [[2, 0], [0, 2]]),
 
    ?assertEqual(rmRow([[1, 2], [3, 4]], 0), [[3, 4]]),
    ?assertEqual(rmRow([1, 2, 3], 0), [2, 3]),
